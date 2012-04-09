@@ -1,6 +1,9 @@
 package com.ui;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -32,6 +35,9 @@ public class IMapView extends View {
 	private float mLastTouchY;
 	private int mActivePointerId = INVALID_POINTER_ID;
 	File f = null;
+	FileInputStream fis = null;
+	InputStreamReader isr = null;
+	String data = "";
 
 	public class Coordinate {
 		public Coordinate(float x, float y) {
@@ -178,7 +184,7 @@ public class IMapView extends View {
 			mScaleFactor *= detector.getScaleFactor();
 
 			// Don't let the object get too small or too large.
-			mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 10.0f));
+			mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 5.0f));
 
 			invalidate();
 			return true;
@@ -195,9 +201,32 @@ public class IMapView extends View {
 
 	private void initFileHandling() {
 		// open FILE objects
+		 try{
+			 fis = getContext().openFileInput("");
+			 isr = new InputStreamReader(fis);		 
+	     }catch(Exception e){
+		 }
 	}
 	private void readFromFile() {
 		// open FILE objects
+		 String data = null;
+		 try{
+		 char[] inputBuffer = new char[fis.available()];
+		 isr.read(inputBuffer);
+		 data = new String(inputBuffer);
+		 int x = 0;
+		 String lines[] = data.split("\n");
+		 for(String aline: lines)
+		 {
+			 String temp[] = aline.split("|");
+			//TODO: Read the values to temp, now just plot
+		 }
+		 
+		 isr.close();
+		 fis.close();
+		 }catch(IOException e){
+			 Log.d("lol", "IOEException read error");
+		 }
 	}
 
 	public void populateSearchPathList() {

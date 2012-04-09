@@ -4,8 +4,12 @@
 package com.sensor;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -26,7 +30,9 @@ public class MovementService extends Service implements SensorEventListener {
 	private SensorManager sensorManager;
 	private MotionState prevState;
 	private MotionState currentState;
-
+	
+	private FileOutputStream fos= null;
+	private OutputStreamWriter osw = null;
 	private int calcUpdateDelay = 250;
 	private int sensUpdateDelay = 250;
 
@@ -79,7 +85,7 @@ public class MovementService extends Service implements SensorEventListener {
 
 
 
-		initFileHandling();
+		initFileHandling(getApplicationContext());
 
 		sensDelayThread.start();
 		calcDelayThread.start();
@@ -189,14 +195,30 @@ public class MovementService extends Service implements SensorEventListener {
 		sensorManager.unregisterListener(this);
 	}
 
-	private boolean initFileHandling() {
+	private boolean initFileHandling(Context context) {
 		// TODO: Only initialise file variables - Nagesh
+		try{
+		 fos= context.openFileOutput("momentService.txt",Context.MODE_APPEND);
+		 osw = new OutputStreamWriter(fos);
+		}catch(IOException e){
+			return false;
+		}
+		
 		return true;
 	}
 	
 	private boolean saveToFile(){
 		// TODO: Code to save to file here - Nagesh
 		// what to save: currentState.earthDisplacement
+		try{
+			
+		//TODO: Bhumlya : write values with pipes
+		 osw.write(" ");
+		 osw.close();
+		 fos.close();
+		}catch(Exception e){
+			
+		}
 		return true;
 	}
 }
